@@ -1,17 +1,17 @@
 package com.e.notesapp.common
 
 import android.app.Application
-import com.e.notesapp.ApplicationComponent
+import android.content.Context
 
-class MyApp: Application() {
-    val appComponent: ApplicationComponent = DaggerApplicationComponent.create()
-
-    companion object {
-        lateinit var instance: MyApp
-    }
-
+class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+    }
+
+    companion object {
+        private var instance: MyApp? = null
+        val context: Context?
+            get() = instance
     }
 }

@@ -2,8 +2,10 @@ package com.salesianostriana.notesapi
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import java.time.LocalDate
 import java.util.*
 
 @RestController
@@ -50,7 +52,32 @@ class NotaController (val notasRepository: NotasRepository) {
     fun getById(@PathVariable id: UUID) =  getNotaById(id).toNotaDto()
 
     @PostMapping("/")
-    fun nuevaSerie(@RequestBody newNota: NotaDto) = ResponseEntity.status(HttpStatus.CREATED)
-            .body(notasRepository.save(newNota.toNota()).toNotaDto())
+    fun nuevaNota(@RequestBody newNota: NewNotaDto, @AuthenticationPrincipal user:User) = ResponseEntity.status(HttpStatus.CREATED)
+            .body(notasRepository.save(newNota.toNota(user)).toNotaDto())
+
+    @DeleteMapping("/{id}")
+    fun borrarNota(@PathVariable id: UUID) {
+        var result: Nota
+        result = getNotaById(id)
+        notasRepository.delete(result)
+
+
+    }
+
+    @PutMapping("/{id}")
+    fun editNota(@PathVariable id: UUID, @RequestBody edit: NewNotaDto): NotaDto {
+        var result:Nota
+        result = getNotaById(id)
+        result.titulo = edit.titulo
+        result.contenido = edit.contenido
+        result.fechaUltEdicion = LocalDate.now()
+        ResponseEntity.status(HttpStatus.CREATED)
+                .body(notasRepository.save(result))
+
+
+        return result.toNotaDto()
+    }
+
+
 
 }

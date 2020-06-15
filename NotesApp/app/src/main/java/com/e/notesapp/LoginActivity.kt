@@ -1,56 +1,51 @@
 package com.e.notesapp
 
-import android.content.SharedPreferences
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.e.notesapp.common.MyApp
-import com.e.notesapp.retrofit.UserRequest
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.e.notesapp.common.Constantes
+import com.e.notesapp.dto.LoginDto
+import com.e.notesapp.retrofit.SharedPreferencesManager
 import com.e.notesapp.viewmodel.UserViewModel
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Inject
+
 
 class LoginActivity : AppCompatActivity() {
 
-    @Inject lateinit var userViewmodel: UserViewModel
-    @Inject lateinit var sharedPref: SharedPreferences
+    lateinit var userViewModel: UserViewModel
+    lateinit var loginDto: LoginDto
 
 
-    private val builder = Retrofit.Builder()
-        .baseUrl("http://localhost:9000")
-        .addConverterFactory(GsonConverterFactory.create())
-    var retrofit = builder.build()
-
-    private lateinit var username: EditText
-    private lateinit var password: EditText
-    private lateinit var btnLogin: Button
+    lateinit var username: EditText
+    lateinit var password: EditText
+    lateinit var btnLogin: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        SharedPreferencesManager.setStringValue(Constantes.TOKEN, null)
+
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         username = findViewById(R.id.username)
         password = findViewById(R.id.password)
         btnLogin = findViewById(R.id.buttonLogin)
-        (applicationContext as MyApp).appComponent.inject(this)
-
 
         btnLogin.setOnClickListener(View.OnClickListener {
-            val request =
-                UserRequest(username.text.toString(), password.text.toString())
-
-            userViewmodel.doLogin(request)
-
+            loginDto = LoginDto(
+                username.text.toString(),
+                password.text.toString()
+            )
+            userViewModel.doLogin(loginDto).observe(this, Observer {
+                SharedPreferencesManager.setStringValue(Constantes.TOKEN, it.token)
+                val i = Intent(this, MainActivity::class.java)
+                startActivity(i)
+            })
         })
-    }
 
-
-
-
-
-
-
+         }
 }

@@ -5,6 +5,6 @@ import retrofit2.http.POST
 
 interface UserService {
 
-    @POST("/auth/login")
-    fun login(): Call<UserRequest>
+   /* @POST("/auth/login")
+    fun login(): Call<UserRequest>*/
 }

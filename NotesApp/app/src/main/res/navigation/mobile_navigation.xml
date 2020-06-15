@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.e.notesapp.ui.home.HomeFragment"
+        android:name="com.e.notesapp.NotasListFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_notas_list_list" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
