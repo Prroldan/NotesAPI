@@ -1,2 +1,3 @@
 # NotesAPI
-Proyecto para el 17 de mayo integrando kotlin.
+Proyecto basado en Notes de Google, versionado y programado con Kotlin
+
